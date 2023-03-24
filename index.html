@@ -17,7 +17,8 @@
         </div>
         <div class="selects">
             <label>Cidade de Origem</label>
-            <select id="c__origem"></select>
+            <select id="c__origem">
+            </select>
         </div>
         <div class="selects">
             <label>País de Destino</label>
@@ -27,33 +28,55 @@
         </div>
         <div class="selects">
             <label>Cidade de Destino</label>
-            <select id="c_destino"></select>
+            <select id="c_destino">
+            </select>
         </div>
         <div class="flex">
             <div>
                 <label>Adultos:</label>
-                <input type="number"/>
+                <button type="button" id="btn__increment">+</button>
+                <input type="number" value="1" id="adultos" class="input__Age"/>
+                <button type="button" id="btn__decrement">-</button>
             </div>
             <div>
                 <label>Crianças:</label>
-                <input type="number"/>
+                <button type="button" id="btn__incrementCrianca">+</button>
+                <input type="number" id="criancas" class="input__Age" value="0"/>
+                <button type="button" id="btn__decrementCrianca">-</button>
             </div>
         </div>
         <div class="flex">
             <div>
+                <input type="radio" value="Classe Econômica" name="classe" id="economica" />
                 <label for="economica">Econômica</label>
-                <input type="radio" value="economica" name="classe"/>
-
+              
+                <input type="radio"  name="classe" value="Classe Executiva" id="executiva"/>
                 <label for="executiva">Executiva</label>
-                <input type="radio"  name="classe" value="executiva"/>
             </div>
         </div>
         <div>
-            <label>Usar X milhas:</label>
-            <input type="range"/>
+            <label>Usar <span id="value"></span> milhas:</label>
+            <input type="range" maxlength="200" minlength="0" value="0" name="milhas" id="milhas"/>
         </div>
 
     </form>
+
+    <div>
+        <h1>Resumo da viagem</h1>
+        <div>
+            <p id="origem"></p>
+            <p id="destino"></p>
+            <p id="distancia"></p>
+            <p id="distancia"></p>
+            <p id="pessoas"></p>
+            <p id="tipo"></p>
+            <p id="precoAdultos"></p>
+            <p id="precoCriancas"></p>
+            <p id="milhasTotais"></p>
+            <p id="valorMilhas"></p>
+            <p id="total"></p>
+        </div>
+    </div>
     <script src="./app.js"></script>
 </body>
 </html>
