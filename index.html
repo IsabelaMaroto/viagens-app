@@ -1,81 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="./index.css">
-</head>
-<body>
-    <form id="form">
-        <div class="selects">
-            <label>País de Origem</label>
-            <select id="p__origem" required>
+    <link rel="stylesheet" href="./reset.css" />
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <header></header>
+    <main>
+      <div class="box__img">
+        <img src="./undraw_aircraft_re_m05i.svg" />
+      </div>
+      <div class="box__text">
+        <form id="form">
+          <div>
+            <div class="selects">
+              <label>País de Origem</label>
+              <select id="p__origem" required>
                 <option label=""></option>
-            </select>
-        </div>
-        <div class="selects">
-            <label>Cidade de Origem</label>
-            <select id="c__origem" required>
-            </select>
-        </div>
-        <div class="selects">
-            <label>País de Destino</label>
-            <select id="p__destino" required>
+              </select>
+            </div>
+            <div class="selects">
+              <label>Cidade de Origem</label>
+              <select id="c__origem" required></select>
+            </div>
+            <div class="selects">
+              <label>País de Destino</label>
+              <select id="p__destino" required>
                 <option label=""></option>
-            </select>
-        </div>
-        <div class="selects">
-            <label>Cidade de Destino</label>
-            <select id="c_destino" required>
-            </select>
-        </div>
-        <div class="flex">
-            <div>
+              </select>
+            </div>
+            <div class="selects">
+              <label>Cidade de Destino</label>
+              <select id="c_destino" required></select>
+            </div>
+            <div class="pessoas">
+              <div>
                 <label>Adultos:</label>
-                <button type="button" id="btn__increment">+</button>
-                <input type="number" value="1" id="adultos" class="input__Age"/>
-                <button type="button" id="btn__decrement">-</button>
-            </div>
-            <div>
+                <div>
+                  <button type="button" id="btn__increment">+</button>
+                  <input
+                    type="number"
+                    value="1"
+                    id="adultos"
+                    class="input__Age"
+                  />
+                  <button type="button" id="btn__decrement">-</button>
+                </div>
+              </div>
+              <div>
                 <label>Crianças:</label>
-                <button type="button" id="btn__incrementCrianca">+</button>
-                <input type="number" id="criancas" class="input__Age" value="0"/>
-                <button type="button" id="btn__decrementCrianca">-</button>
+                <div>
+                  <button type="button" id="btn__incrementCrianca">+</button>
+                  <input
+                    type="number"
+                    id="criancas"
+                    class="input__Age"
+                    value="0"
+                  />
+                  <button type="button" id="btn__decrementCrianca">-</button>
+                </div>
+              </div>
             </div>
-        </div>
-        <div class="flex">
-            <div>
-                <input type="radio" value="Classe Econômica" name="classe" id="economica" />
-                <label for="economica">Econômica</label>
-              
-                <input type="radio"  name="classe" value="Classe Executiva" id="executiva"/>
-                <label for="executiva">Executiva</label>
+            <div class="classe">
+              <div>
+                <p>Classe:</p>
+              </div>
+              <div class="box__inputs">
+                <div>
+                  <input
+                    type="radio"
+                    value="Classe Econômica"
+                    name="classe"
+                    id="economica"
+                  />
+                  <label for="economica">Econômica</label>
+                </div>
+                <div >
+                  <input
+                    type="radio"
+                    name="classe"
+                    value="Classe Executiva"
+                    id="executiva"
+                  />
+                  <label for="executiva">Executiva</label>
+                </div>
+              </div>
             </div>
-        </div>
-        <div>
-            <label>Usar <span id="value"></span> milhas:</label>
-            <input type="range" value="0" name="milhas" id="milhas" style="width: 50%;" step="100" max="1000" disabled/>
-        </div>
-        <input type="submit" value="submit" id="submit"/>
-    </form>
 
-    <div id="resumo">
-        <h1>Resumo da viagem</h1>
-        <div >
-            <p id="origem"></p>
-            <p id="destino"></p>
-            <p id="distancia"></p>
-            <p id="pessoas"></p>
-            <p id="tipo"></p>
-            <p id="precoAdultos"></p>
-            <p id="precoCriancas"></p>
-            <p id="milhasTotais"></p>
-            <p id="valorMilhas"></p>
-            <p id="total"></p>
+            <div class="milhas">
+              <label>Usar <span id="value"></span> milhas:</label>
+              <input
+                type="range"
+                value="0"
+                name="milhas"
+                id="milhas"
+                step="100"
+                max="1000"
+                disabled
+              />
+            </div>
+            <div class="botao">
+              <input type="submit" value="Enviar" id="submit" />
+            </div>
+          </div>
+        </form>
+
+        <div id="resumo" class="resumo">
+          <h1>Resumo da viagem</h1>
+          <div>
+            <p>Origem: <span id="origem"></span></p>
+            <p>Destino: <span id="destino"></span></p>
+            <p>Distância: <span id="distancia"></span></p>
+            <div>
+              <p>Passageiros:</p>
+              <p>Adulto (s) <span id="resultadoAdultos"></span></p>
+              <p>Criança (s) <span id="resultadoCriancas"></span></p>
+            </div>
+            <p>Tipo: <span id="tipo"></span></p>
+            <p>Preço por adulto: <span id="precoAdultos"></span></p>
+            <p>Preço por criança: <span id="precoCriancas"></span></p>
+            <p>Milhas utilizadas:<span id="milhasTotais"></span></p>
+            <p>Valor das milhas:<span id="valorMilhas"></span></p>
+            <h2>Total: <span id="total"></span></h2>
+          </div>
         </div>
-    </div>
+      </div>
+    </main>
     <script src="./app.js"></script>
-</body>
+  </body>
 </html>
