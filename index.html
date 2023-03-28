@@ -8,27 +8,27 @@
     <link rel="stylesheet" href="./index.css">
 </head>
 <body>
-    <form>
+    <form id="form">
         <div class="selects">
             <label>País de Origem</label>
-            <select id="p__origem">
+            <select id="p__origem" required>
                 <option label=""></option>
             </select>
         </div>
         <div class="selects">
             <label>Cidade de Origem</label>
-            <select id="c__origem">
+            <select id="c__origem" required>
             </select>
         </div>
         <div class="selects">
             <label>País de Destino</label>
-            <select id="p__destino">
+            <select id="p__destino" required>
                 <option label=""></option>
             </select>
         </div>
         <div class="selects">
             <label>Cidade de Destino</label>
-            <select id="c_destino">
+            <select id="c_destino" required>
             </select>
         </div>
         <div class="flex">
@@ -56,14 +56,14 @@
         </div>
         <div>
             <label>Usar <span id="value"></span> milhas:</label>
-            <input type="range"  value="0" name="milhas" id="milhas"/>
+            <input type="range" value="0" name="milhas" id="milhas" style="width: 50%;" step="100" max="1000" disabled/>
         </div>
-        <input type="button" value="submit" id="submit"/>
+        <input type="submit" value="submit" id="submit"/>
     </form>
 
-    <div>
+    <div id="resumo">
         <h1>Resumo da viagem</h1>
-        <div id="resumo">
+        <div >
             <p id="origem"></p>
             <p id="destino"></p>
             <p id="distancia"></p>

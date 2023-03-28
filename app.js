@@ -122,6 +122,9 @@ async function OrigemEDestino() {
       const destino = document.getElementById("destino");
       destino.innerText =
         "Destino: " + cidadedestino.city + "(" + paisdestino.country + ")";
+      if (cidadeorigem && cidadedestino) {
+        Distancia();
+      }
     };
   }
 
@@ -141,6 +144,7 @@ function QtdPessoas() {
   const subtrairAdultos = document.getElementById("btn__decrement");
   const somarCriancas = document.getElementById("btn__incrementCrianca");
   const subtrairCriancas = document.getElementById("btn__decrementCrianca");
+  const pessoas = document.getElementById("pessoas");
 
   qtdAdultos = inputAdultos.value;
   qtdCriancas = inputCriancas.value;
@@ -150,24 +154,32 @@ function QtdPessoas() {
   somarAdultos.onclick = () => {
     qtdAdultos++;
     inputAdultos.value = qtdAdultos;
+    pessoas.innerText = "Adultos:" + qtdAdultos + "Crianças:" + qtdCriancas;
+    Precos();
   };
 
   subtrairAdultos.onclick = () => {
     if (inputAdultos.value >= 2) {
       qtdAdultos--;
       inputAdultos.value = qtdAdultos;
+      pessoas.innerText = "Adultos:" + qtdAdultos + "Crianças:" + qtdCriancas;
+      Precos();
     }
   };
 
   somarCriancas.onclick = () => {
     qtdCriancas++;
     inputCriancas.value = qtdCriancas;
+    pessoas.innerText = "Adultos:" + qtdAdultos + "Crianças:" + qtdCriancas;
+    Precos();
   };
 
   subtrairCriancas.onclick = () => {
     if (inputCriancas.value >= 1) {
       qtdCriancas--;
       inputCriancas.value = qtdCriancas;
+      pessoas.innerText = "Adultos:" + qtdAdultos + "Crianças:" + qtdCriancas;
+      Precos();
     }
   };
 }
@@ -175,6 +187,7 @@ function QtdPessoas() {
 function Classe() {
   const economica = document.getElementById("economica");
   const executiva = document.getElementById("executiva");
+  const tipo = document.getElementById("tipo");
 
   economica.checked = true;
   classe = economica.value;
@@ -183,11 +196,15 @@ function Classe() {
   economica.onclick = () => {
     if ((economica.checked = true)) {
       classe = economica.value;
+      tipo.innerText = "Tipo de vôo:" + classe;
+      Precos();
     }
   };
   executiva.onclick = () => {
     if ((executiva.checked = true)) {
       classe = executiva.value;
+      tipo.innerText = "Tipo de vôo:" + classe;
+      Precos();
     }
   };
 }
@@ -195,19 +212,34 @@ function Classe() {
 function Milhas() {
   const range = document.getElementById("milhas");
   const value = document.getElementById("value");
-  
+  const milhas = document.getElementById("milhasTotais");
+  const valorMilhas = document.getElementById("valorMilhas");
+
   qtdMilhas = 0;
   value.innerText = 0;
   precoMilhas = 0;
+  milhas.innerText = "Minha quantidade de milhas:" + qtdMilhas;
+  valorMilhas.innerText = "Desconto das milhas:" + "R$" + precoMilhas;
 
-  range.addEventListener("input", function () {
-    value.innerText = range.value;
-    qtdMilhas = range.value;
-    precoMilhas = qtdMilhas * 0.02;
-  });
+  if (distancia && precoTotal) {
+    range.disabled = false;
+
+    range.addEventListener("input", function () {
+      value.innerText = range.value;
+      qtdMilhas = range.value;
+      precoMilhas = qtdMilhas * 0.02;
+      range.max = precoTotal / 0.02 - 1;
+      milhas.innerText = "Minha quantidade de milhas:" + qtdMilhas;
+      valorMilhas.innerText = "Desconto das milhas:" + "R$" + precoMilhas;
+      Precos();
+    });
+  }
 }
 
 function Distancia() {
+  const inputDistancia = document.getElementById("distancia");
+  inputDistancia.innerText = "Distância:" + distancia + "Km";
+
   if (cidadeorigem != null && cidadedestino != null) {
     let theta = cidadeorigem.longitude - cidadedestino.longitude;
     let distance =
@@ -223,43 +255,75 @@ function Distancia() {
       );
 
     distancia = Math.round(distance * 1.609344, 2);
-    Precos();
+
+    inputDistancia.innerText = "Distância:" + distancia + "Km";
+
+    if (distancia) {
+      Precos();
+      Milhas();
+      const total = document.getElementById("total");
+      total.innerText = "Total:" + precoTotal;
+      inputDistancia.innerText = "Distância:" + distancia + "Km";
+    }
   } else {
     console.log("erro: distância não definida");
   }
 }
 
 function Precos() {
-  if (classe == "Classe Econômica") {
-    if (paisorigem.country == paisdestino.country) {
-      precoPorAdulto = qtdAdultos * distancia * 0.3;
-      precoPorCrianca = qtdCriancas * distancia * 0.15;
-    } else if (paisorigem.country != paisdestino.country) {
-      precoPorAdulto = distancia * 0.5;
-      precoPorCrianca = distancia * 0.25;
-    }
-  } else if (classe == "Classe Executiva") {
-    if (paisorigem.country == paisdestino.country) {
-      precoPorAdulto = qtdAdultos * distancia * 0.3 * 1.8;
-      precoPorCrianca = qtdCriancas * distancia * 0.15 * 1.4;
-    } else if (paisorigem.country != paisdestino.country) {
-      precoPorAdulto = distancia * 0.5 * 1.8;
-      precoPorCrianca = distancia * 0.25 * 1.4;
-    }
-  }
+  const precoAdultos = document.getElementById("precoAdultos");
+  const precoCriancas = document.getElementById("precoCriancas");
+  const total = document.getElementById("total");
 
-  precoTotal = precoPorAdulto + precoPorCrianca;
-  if (qtdMilhas > 0) {
-    precoTotal = precoTotal - (qtdMilhas * 0.02);
-    console.log(qtdMilhas)
+  precoAdultos.innerText = 0;
+  precoCriancas.innerText = 0;
+
+  if (distancia) {
+    if (classe == "Classe Econômica") {
+      if (paisorigem.country == paisdestino.country) {
+        precoPorAdulto = qtdAdultos * distancia * 0.3;
+        precoPorCrianca = qtdCriancas * distancia * 0.15;
+      } else if (paisorigem.country != paisdestino.country) {
+        precoPorAdulto = distancia * 0.5;
+        precoPorCrianca = distancia * 0.25;
+      }
+    } else if (classe == "Classe Executiva") {
+      if (paisorigem.country == paisdestino.country) {
+        precoPorAdulto = qtdAdultos * distancia * 0.3 * 1.8;
+        precoPorCrianca = qtdCriancas * distancia * 0.15 * 1.4;
+      } else if (paisorigem.country != paisdestino.country) {
+        precoPorAdulto = distancia * 0.5 * 1.8;
+        precoPorCrianca = distancia * 0.25 * 1.4;
+      }
+    }
+
+    precoAdultos.innerText = "R$" + precoPorAdulto.toFixed(2);
+    precoCriancas.innerText = "R$" + precoPorCrianca.toFixed(2);
+
+    precoTotal = precoPorAdulto + precoPorCrianca;
+
+    total.innerText = "Total:" + precoTotal.toFixed(2);
+    if (qtdMilhas > 0) {
+      precoTotal = precoTotal - qtdMilhas * 0.02;
+      total.innerText = "Total:" + precoTotal.toFixed(2);
+    }
   }
 }
 
 function Submit() {
   const submit = document.getElementById("submit");
+  const hide = document.getElementById("resumo");
+  hide.style.display = "none";
 
+  const form = document.getElementById("form");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+  });
+  
   submit.onclick = () => {
-    Distancia();
+    if (distancia) {
+      hide.style.display = "block";
+    }
 
     const pessoas = document.getElementById("pessoas");
     pessoas.innerText = "Adultos:" + qtdAdultos + "Crianças:" + qtdCriancas;
@@ -268,25 +332,25 @@ function Submit() {
     tipo.innerText = "Tipo de vôo:" + classe;
 
     const milhas = document.getElementById("milhasTotais");
-    milhas.innerText = "Minha quantidade de milhas:" + qtdMilhas;
+    milhas.innerText = "Quantidade de milhas:" + qtdMilhas;
 
     const inputDistancia = document.getElementById("distancia");
     inputDistancia.innerText = "Distância:" + distancia + "Km";
 
     const precoAdultos = document.getElementById("precoAdultos");
-    precoAdultos.innerText = "R$" + precoPorAdulto.toFixed(2) + "por adulto";
+    precoAdultos.innerText = "Preço por adulto:" + "R$" + precoPorAdulto;
 
     const precoCriancas = document.getElementById("precoCriancas");
-    precoCriancas.innerText = "R$" + precoPorCrianca.toFixed(2) + "por criança";
+    precoCriancas.innerText = "Preço por criança:" + "R$" + precoPorCrianca;
 
     const valorMilhas = document.getElementById("valorMilhas");
-    valorMilhas.innerText = "Desconto das milhas:" + "R$" + precoMilhas.toFixed(2);
+    valorMilhas.innerText = "Desconto das milhas:" + "R$" + precoMilhas;
 
     const total = document.getElementById("total");
-    total.innerText = "Total:" + precoTotal.toFixed(2);
+    total.innerText = "Total:" + precoTotal;
 
     const range = document.getElementById("milhas");
-    range.max = (precoTotal / 0.02) - 1;
+    range.max = precoTotal / 0.02 - 1;
   };
 }
 
@@ -294,4 +358,5 @@ OrigemEDestino();
 QtdPessoas();
 Classe();
 Milhas();
+Precos();
 Submit();
