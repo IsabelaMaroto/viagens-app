@@ -39,7 +39,7 @@ function degreesToRadians(degrees) {
 }
 
 async function OrigemEDestino() {
-  const get = await fetch("http://localhost:3000/countries");
+  const get = await fetch("./countries.json");
   const response = await get.json();
 
   const POrigem = document.getElementById("p__origem");
