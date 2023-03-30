@@ -97,7 +97,7 @@ main {
 .box__text form .botao {
   text-align: right;
 }
-.box__text form .botao #submit {
+.box__text form .botao #submit-btn {
   padding: 10px 20px;
   border-radius: 10px;
   color: white;

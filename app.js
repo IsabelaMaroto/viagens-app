@@ -16,10 +16,31 @@ let precoMilhas;
 let precoTotal;
 
 
+const hide = document.getElementById("resumo");
+hide.style.display = "none";
+
+const numberFormatter = new Intl.NumberFormat("pt-BR");
+const moneyFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
+
+
+function helperFormatValue(value) {
+  return numberFormatter.format(value);
+}
+
+function helperFormatMoney(value) {
+  return moneyFormatter.format(value);
+}
+
+function degreesToRadians(degrees) {
+  return degrees * (Math.PI / 180);
+}
+
 async function OrigemEDestino() {
   const get = await fetch("http://localhost:3000/countries");
   const response = await get.json();
-  console.log(response);
 
   const POrigem = document.getElementById("p__origem");
   const COrigem = document.getElementById("c__origem");
@@ -47,7 +68,6 @@ async function OrigemEDestino() {
           paisorigem = pais;
         }
       });
-      console.log("País de origem: ", paisorigem);
       listaCidadeOrigem();
     };
   }
@@ -71,7 +91,6 @@ async function OrigemEDestino() {
       });
       const origem = document.getElementById("origem");
       origem.innerText = cidadeorigem.city + "(" + paisorigem.country + ")";
-      console.log("Cidade de origem:", cidadeorigem);
     };
   }
 
@@ -94,7 +113,6 @@ async function OrigemEDestino() {
           paisdestino = pais;
         }
       });
-      console.log("País de Destino: ", paisdestino);
       listaCidadeDestino();
     };
   }
@@ -118,7 +136,6 @@ async function OrigemEDestino() {
           cidadedestino = cidade;
         }
       });
-      console.log("Cidade de Destino:", cidadedestino);
       const destino = document.getElementById("destino");
       destino.innerText = cidadedestino.city + "(" + paisdestino.country + ")";
       if (cidadeorigem && cidadedestino) {
@@ -192,7 +209,7 @@ function Classe() {
 
   economica.checked = true;
   classe = economica.value;
-  tipo.innerText =  classe;
+  tipo.innerText = classe;
 
   economica.onclick = () => {
     if ((economica.checked = true)) {
@@ -204,7 +221,7 @@ function Classe() {
   executiva.onclick = () => {
     if ((executiva.checked = true)) {
       classe = executiva.value;
-      tipo.innerText =  classe;
+      tipo.innerText = classe;
       Precos();
     }
   };
@@ -219,8 +236,8 @@ function Milhas() {
   qtdMilhas = 0;
   value.innerText = 0;
   precoMilhas = 0;
-  milhas.innerText =  qtdMilhas;
-  valorMilhas.innerText =  precoMilhas;
+  milhas.innerText = qtdMilhas;
+  valorMilhas.innerText = `${helperFormatMoney(precoMilhas)}`
 
   if (distancia && precoTotal) {
     range.disabled = false;
@@ -231,7 +248,7 @@ function Milhas() {
       precoMilhas = qtdMilhas * 0.02;
       range.max = precoTotal / 0.02 - 1;
       milhas.innerText = qtdMilhas;
-      valorMilhas.innerText =  precoMilhas;
+      valorMilhas.innerText = `${helperFormatMoney(precoMilhas)}`
       Precos();
     });
   }
@@ -239,36 +256,34 @@ function Milhas() {
 
 function Distancia() {
   const inputDistancia = document.getElementById("distancia");
-  inputDistancia.innerText =  distancia + "Km";
 
-  if (cidadeorigem != null && cidadedestino != null) {
-    let theta = cidadeorigem.longitude - cidadedestino.longitude;
-    let distance =
-      60 *
-      1.1515 *
-      (180 / Math.PI) *
-      Math.acos(
-        Math.sin(cidadeorigem.latitude * (Math.PI / 180)) *
-          Math.sin(cidadedestino.latitude * (Math.PI / 180)) +
-          Math.cos(cidadeorigem.latitude * (Math.PI / 180)) *
-            Math.cos(cidadedestino.latitude * (Math.PI / 180)) *
-            Math.cos(theta * (Math.PI / 180))
-      );
-
-    distancia = Math.round(distance * 1.609344, 2);
-
-    inputDistancia.innerText =  distancia + "Km";
-
-    if (distancia) {
-      Precos();
-      Milhas();
-      const total = document.getElementById("total");
-      total.innerText =  precoTotal;
-      inputDistancia.innerText =  distancia + "Km";
-    }
-  } else {
-    console.log("erro: distância não definida");
-  }
+  const EARTH_RADIUS = 6_371.071; // Earth
+  const diffLatitudeRadians = degreesToRadians(
+    cidadedestino.latitude - cidadeorigem.latitude
+  );
+  const diffLongitudeRadians = degreesToRadians(
+    cidadedestino.longitude - cidadeorigem.longitude
+  );
+  const originLatitudeRadians = degreesToRadians(cidadeorigem.latitude);
+  const destinationLatitudeRadians = degreesToRadians(cidadedestino.latitude);
+  let kmDistance =
+    2 *
+    EARTH_RADIUS *
+    Math.asin(
+      Math.sqrt(
+        Math.sin(diffLatitudeRadians / 2) * Math.sin(diffLatitudeRadians / 2) +
+          Math.cos(originLatitudeRadians) *
+            Math.cos(destinationLatitudeRadians) *
+            Math.sin(diffLongitudeRadians / 2) *
+            Math.sin(diffLongitudeRadians / 2)
+      )
+    );
+  distancia = kmDistance
+  inputDistancia.innerText = `${distancia} km`;
+  Precos();
+  Milhas();
+  const total = document.getElementById("total");
+  total.innerText = `${helperFormatMoney(precoTotal)}`;
 }
 
 function Precos() {
@@ -276,8 +291,8 @@ function Precos() {
   const precoCriancas = document.getElementById("precoCriancas");
   const total = document.getElementById("total");
 
-  precoAdultos.innerText = 0;
-  precoCriancas.innerText = 0;
+  precoAdultos.innerText = `${helperFormatMoney(precoPorAdulto)}`
+  precoCriancas.innerText = `${helperFormatMoney(precoPorCrianca)}`
 
   if (distancia) {
     if (classe == "Classe Econômica") {
@@ -285,77 +300,75 @@ function Precos() {
         precoPorAdulto = qtdAdultos * distancia * 0.3;
         precoPorCrianca = qtdCriancas * distancia * 0.15;
       } else if (paisorigem.country != paisdestino.country) {
-        precoPorAdulto = distancia * 0.5;
-        precoPorCrianca = distancia * 0.25;
+        precoPorAdulto = qtdAdultos * distancia * 0.5;
+        precoPorCrianca = qtdCriancas * distancia * 0.25;
       }
     } else if (classe == "Classe Executiva") {
       if (paisorigem.country == paisdestino.country) {
         precoPorAdulto = qtdAdultos * distancia * 0.3 * 1.8;
         precoPorCrianca = qtdCriancas * distancia * 0.15 * 1.4;
       } else if (paisorigem.country != paisdestino.country) {
-        precoPorAdulto = distancia * 0.5 * 1.8;
-        precoPorCrianca = distancia * 0.25 * 1.4;
+        precoPorAdulto =  qtdAdultos * distancia * 0.5 * 1.8;
+        precoPorCrianca = qtdCriancas * distancia * 0.25 * 1.4;
       }
     }
 
-    precoAdultos.innerText =  precoPorAdulto.toFixed(2);
-    precoCriancas.innerText =  precoPorCrianca.toFixed(2);
+    precoAdultos.innerText = `${helperFormatMoney(precoPorAdulto)}`
+    precoCriancas.innerText = `${helperFormatMoney(precoPorCrianca)}`
 
-    precoTotal = precoPorAdulto + precoPorCrianca;
+    
 
-    total.innerText =  precoTotal.toFixed(2);
     if (qtdMilhas > 0) {
-      precoTotal = precoTotal - qtdMilhas * 0.02;
-      total.innerText = precoTotal.toFixed(2);
+      precoTotal = (precoPorAdulto + precoPorCrianca ) - precoMilhas;
+      total.innerText = `${helperFormatMoney(precoTotal)}`
+    } else{
+      precoTotal = precoPorAdulto + precoPorCrianca;
+      total.innerText = `${helperFormatMoney(precoTotal)}`
     }
   }
 }
 
 function Submit() {
-  const submit = document.getElementById("submit");
-  const hide = document.getElementById("resumo");
-  hide.style.display = "none";
-
   const form = document.getElementById("form");
   form.addEventListener("submit", (e) => {
     e.preventDefault();
   });
 
-  submit.onclick = () => {
-    if (distancia) {
+  if(distancia){
       hide.style.display = "block";
-    }
-
-    const resultadoAdultos = document.getElementById("resultadoAdultos");
-    resultadoAdultos.innerText = qtdAdultos;
-
-    const resultadoCriancas = document.getElementById("resultadoCriancas");
-    resultadoCriancas.innerText = qtdCriancas;
-
-    const tipo = document.getElementById("tipo");
-    tipo.innerText = classe;
-
-    const milhas = document.getElementById("milhasTotais");
-    milhas.innerText = qtdMilhas;
-
-    const inputDistancia = document.getElementById("distancia");
-    inputDistancia.innerText = distancia + "km";
-
-    const precoAdultos = document.getElementById("precoAdultos");
-    precoAdultos.innerText = precoPorAdulto.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
-
-    const precoCriancas = document.getElementById("precoCriancas");
-    precoCriancas.innerText = precoPorCrianca.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
-
-    const valorMilhas = document.getElementById("valorMilhas");
-    valorMilhas.innerText = precoMilhas.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
-
-    const total = document.getElementById("total");
-    total.innerText = precoTotal.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
-
-    const range = document.getElementById("milhas");
-    range.max = precoTotal / 0.02 - 1;
-  };
+  
+      const resultadoAdultos = document.getElementById("resultadoAdultos");
+      resultadoAdultos.innerText = qtdAdultos;
+  
+      const resultadoCriancas = document.getElementById("resultadoCriancas");
+      resultadoCriancas.innerText = qtdCriancas;
+  
+      const tipo = document.getElementById("tipo");
+      tipo.innerText = `${classe}`;
+  
+      const milhas = document.getElementById("milhasTotais");
+      milhas.innerText = `${qtdMilhas}`;
+  
+      const inputDistancia = document.getElementById("distancia");
+      inputDistancia.innerText = `${helperFormatValue(distancia)} km`;
+  
+      const precoAdultos = document.getElementById("precoAdultos");
+      precoAdultos.innerText = `${helperFormatMoney(precoPorAdulto)}`;
+  
+      const precoCriancas = document.getElementById("precoCriancas");
+      precoCriancas.innerText = `${helperFormatMoney(precoPorCrianca)}`;
+  
+      const valorMilhas = document.getElementById("valorMilhas");
+      valorMilhas.innerText = `${helperFormatMoney(precoMilhas)}`;
+  
+      const total = document.getElementById("total");
+      total.innerText = `${helperFormatMoney(precoTotal)}`;
+  
+      const range = document.getElementById("milhas");
+      range.max = (precoTotal / 0.02) - 1;
+    
+  }
+  
 }
 
 OrigemEDestino();
@@ -363,4 +376,4 @@ QtdPessoas();
 Classe();
 Milhas();
 Precos();
-Submit();
+
