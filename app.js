@@ -247,7 +247,7 @@ function Milhas() {
       qtdMilhas = range.value;
       precoMilhas = qtdMilhas * 0.02;
       range.max = precoTotal / 0.02 - 1;
-      milhas.innerText = qtdMilhas;
+      milhas.innerText = `${helperFormatValue(qtdMilhas)}`;
       valorMilhas.innerText = `${helperFormatMoney(precoMilhas)}`
       Precos();
     });
@@ -347,7 +347,7 @@ function Submit() {
       tipo.innerText = `${classe}`;
   
       const milhas = document.getElementById("milhasTotais");
-      milhas.innerText = `${qtdMilhas}`;
+      milhas.innerText = `${helperFormatValue(qtdMilhas)}`;
   
       const inputDistancia = document.getElementById("distancia");
       inputDistancia.innerText = `${helperFormatValue(distancia)} km`;
