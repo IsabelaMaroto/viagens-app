@@ -41,13 +41,13 @@ function degreesToRadians(degrees) {
 async function OrigemEDestino() {
   const get = await fetch("./countries.json");
   const response = await get.json();
-
+  
   const POrigem = document.getElementById("p__origem");
   const COrigem = document.getElementById("c__origem");
   const PDestino = document.getElementById("p__destino");
   const CDestino = document.getElementById("c_destino");
 
-  todosPaises = response;
+  todosPaises = response.countries;
 
   function listPaisOrigem() {
     todosPaises.map((pais) => {
